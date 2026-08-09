@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CraveVerse Restaurant</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+  <div class="brand" onclick="show('home')">🍽 Crave<span class="dot">Verse</span></div>
+  <nav class="top-links" id="topNavLoggedOut">
+    <button onclick="show('signin')">Sign Up</button>
+    <button onclick="show('login')">Login</button>
+  </nav>
+  <nav class="top-links" id="topNavLoggedIn" style="display:none;">
+    <span class="hi-user" id="hiUser"></span>
+    <button onclick="show('dashboard')">Dashboard</button>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</header>
+
+<!-- HOME (first page — just shop details, no categories) -->
+<div id="home" class="container active">
+  <div class="hero">
+    <div class="eyebrow">Fresh · Fast · Full of Flavor</div>
+    <h1>Real food, real fast, straight to your door</h1>
+    <p class="tagline">"Every dish has a story. Yours starts here."</p>
+    <p>Handpicked veg & non-veg mains, cold-pressed juices, and desserts made the same day, delivered hot to your doorstep by CraveVerse Restaurant.</p>
+    <div class="hero-cta">
+      <button class="primary" onclick="enterDashboard()">Order Now</button>
+      <button class="ghost" onclick="show('contact')">Contact Us</button>
+    </div>
+  </div>
+
+  <div class="cat-section">
+    <h2>Why CraveVerse</h2>
+    <p class="lead">A few things we care about, every single order</p>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-icon">🍳</div>
+        <h4>Cooked Fresh Daily</h4>
+        <p>Nothing pre-made — every dish is prepared after you order.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🚴</div>
+        <h4>30-Minute Delivery</h4>
+        <p>Hot food, quick hands, straight to your door.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🌿</div>
+        <h4>Real Ingredients</h4>
+        <p>No shortcuts — quality produce and honest recipes.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2026 CraveVerse Restaurant · Made with real ingredients</footer>
+</div>
+
+<!-- DASHBOARD (shown only after login) -->
+<div id="dashboard" class="container">
+  <div class="dash-hero">
+    <img class="dash-hero-bg" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=1600&auto=format&fit=crop" alt="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=1600&auto=format&fit=crop';">
+    <div class="dash-hero-overlay"></div>
+    <p class="dash-hi" id="dashHi">Welcome back!</p>
+    <h2>What are you craving today?</h2>
+  </div>
+  <div class="cat-section">
+    <div class="cat-grid">
+      <button class="cat-tile" onclick="show('veg')">
+        <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500" alt="Veg">
+        <div class="overlay"><span>🥦 Veg</span></div>
+      </button>
+      <button class="cat-tile" onclick="show('nonveg')">
+        <img src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=500" alt="Non-Veg">
+        <div class="overlay"><span>🍗 Non-Veg</span></div>
+      </button>
+      <button class="cat-tile" onclick="show('juice')">
+        <img src="https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500" alt="Juices">
+        <div class="overlay"><span>🥤 Juices</span></div>
+      </button>
+      <button class="cat-tile" onclick="show('icecream')">
+        <img src="https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=500" alt="Ice Cream">
+        <div class="overlay"><span>🍨 Ice Cream</span></div>
+      </button>
+      <button class="cat-tile" onclick="show('cakes')">
+        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500" alt="Cakes">
+        <div class="overlay"><span>🎂 Cakes</span></div>
+      </button>
+      <button class="cat-tile" onclick="show('contact')">
+        <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=500" alt="Contact">
+        <div class="overlay"><span>📞 Contact</span></div>
+      </button>
+    </div>
+  </div>
+  <footer>© 2026 CraveVerse Restaurant · Made with real ingredients</footer>
+</div>
+
+<!-- SIGN IN -->
+<div id="signin" class="container">
+  <div class="auth-wrap">
+    <img class="auth-bg" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=1600&auto=format&fit=crop" alt="" onerror="this.style.display='none';">
+    <div class="auth-overlay"></div>
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="auth-logo">🍽</div>
+        <h1>Crave<span class="dot">Verse</span></h1>
+        <p class="verse">"Good food, good mood, delivered."</p>
+      </div>
+      <h2>Create Account</h2>
+      <p class="sub">Sign up to start ordering</p>
+      <input id="name" placeholder="Name">
+      <input id="username" placeholder="Username">
+      <input id="pass" type="password" placeholder="Password">
+      <button class="btn-primary" onclick="register()">Create Account</button>
+      <div class="switch-link">Already have an account? <a onclick="show('login')">Login</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN (shown when an order/checkout needs auth) -->
+<div id="login" class="container">
+  <div class="auth-wrap">
+    <img class="auth-bg" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=1600&auto=format&fit=crop" alt="" onerror="this.style.display='none';">
+    <div class="auth-overlay"></div>
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="auth-logo">🍽</div>
+        <h1>Crave<span class="dot">Verse</span></h1>
+        <p class="verse">"Every dish has a story. Yours starts here."</p>
+      </div>
+      <h2>Welcome Back</h2>
+      <p class="sub">Login to continue to checkout</p>
+      <input id="loginUsername" placeholder="Username">
+      <input id="loginPass" type="password" placeholder="Password">
+      <button class="btn-primary" onclick="login()">Login</button>
+      <div class="switch-link">New here? <a onclick="show('signin')">Sign Up</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADDRESS -->
+<div id="address" class="container">
+  <div class="simple-page">
+    <img class="simple-bg" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=1600&auto=format&fit=crop" alt="" onerror="this.style.display='none';">
+    <div class="simple-overlay"></div>
+    <div class="simple-card">
+      <h2>📍 Delivery Details</h2>
+      <p class="sub" style="color:var(--muted);font-size:14px;margin-bottom:16px;">Where should we deliver your order?</p>
+      <div class="order-summary" id="orderSummary"></div>
+      <textarea id="addr" placeholder="Enter full address"></textarea>
+      <input id="phone" placeholder="Phone Number">
+      <button class="btn-primary" onclick="confirmOrder()">Confirm Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="success" class="container">
+  <div class="simple-page">
+    <img class="simple-bg" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=1600&auto=format&fit=crop" alt="" onerror="this.style.display='none';">
+    <div class="simple-overlay"></div>
+    <div class="simple-card">
+      <div class="success-icon">🎉</div>
+      <h2>Order Placed!</h2>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Your food is being prepared and will be on its way shortly.</p>
+      <div class="order-summary" id="successSummary" style="text-align:center;"></div>
+      <button class="btn-primary" onclick="show('dashboard')">Back to Menu</button>
+      <button class="btn-outline" onclick="show('veg')">Order More</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div id="contact" class="container">
+  <div class="simple-page">
+    <div class="simple-card">
+      <div class="auth-brand">
+        <div class="auth-logo">🍽</div>
+        <h1>Crave<span class="dot">Verse</span></h1>
+        <p class="verse">"Every dish has a story. Yours starts here."</p>
+      </div>
+      <h2>📞 Get in Touch</h2>
+      <p style="color:var(--muted);font-size:14px;margin:10px 0;">We're here every day, 9am – 11pm</p>
+      <p style="font-weight:700;">9876543210</p>
+      <p style="font-weight:700;">aswinipaps@gmail.com</p>
+      <p style="font-weight:700;">Thoothukudi, Tamil Nadu</p>
+      <button class="btn-primary" onclick="show('home')">Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOD SECTIONS -->
+<div id="veg" class="container"><div class="page-pad" data-body></div></div>
+<div id="nonveg" class="container"><div class="page-pad" data-body></div></div>
+<div id="juice" class="container"><div class="page-pad" data-body></div></div>
+<div id="icecream" class="container"><div class="page-pad" data-body></div></div>
+<div id="cakes" class="container"><div class="page-pad" data-body></div></div>
+
+</body>
+<script src="script.js"></script>
+</html>
