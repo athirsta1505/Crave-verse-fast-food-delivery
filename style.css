@@ -575,3 +575,21 @@
     font-size:12.5px;
     background:var(--charcoal-soft);
   }
+    /* emoji tile used when a menu item has no photo */
+
+     .img-ph{
+    width:100%;
+    height:150px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:56px;
+    background:linear-gradient(135deg,#ffe9cf 0%,#ffd1a1 100%);
+  }
+  .img-ph.small{
+    width:48px;
+    height:48px;
+    font-size:24px;
+    border-radius:8px;
+    flex-shrink:0;
+  }
