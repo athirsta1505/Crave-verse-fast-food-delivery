@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Edit Farmer Profile</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+
+    min-height:100vh;
+
+    background:
+    linear-gradient(rgba(0,80,0,0.4),rgba(0,80,0,0.4)),
+    url("images/agriculture-bg.jpg");
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:30px 0;
+
+}
+
+
+.edit-box{
+
+    position:relative;
+    width:380px;
+    background:white;
+    padding:30px;
+    border-radius:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+
+}
+
+.back-arrow{
+
+    position:absolute;
+    top:20px;
+    left:20px;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#e8f5e9;
+    color:#1b5e20;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    text-decoration:none;
+    cursor:pointer;
+
+}
+
+.back-arrow:hover{
+    background:#cfe8d0;
+}
+
+
+h2{
+
+    text-align:center;
+    color:#1b5e20;
+    margin-bottom:20px;
+
+}
+
+
+.profile-img-wrap{
+    position:relative;
+    width:100px;
+    margin:auto;
+    cursor:pointer;
+}
+
+.profile-img{
+
+    display:block;
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    margin:auto;
+    border:4px solid #2e7d32;
+    object-fit:cover;
+
+}
+
+.edit-icon{
+
+    position:absolute;
+    bottom:0;
+    right:0;
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    background:#2e7d32;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    border:2px solid white;
+
+}
+
+.suggest-row{
+    display:none;
+}
+
+.suggest-row.show{
+    display:flex;
+}
+
+
+input,select{
+
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:10px;
+    border:1px solid #ccc;
+
+}
+
+.suggest-row{
+    align-items:center;
+    gap:10px;
+    margin:8px 0 14px;
+}
+
+.suggest-row input[type=file]{
+    flex:1;
+    margin:0;
+    padding:8px;
+    font-size:12px;
+}
+
+.suggest-avatars{
+    display:none;   /* hidden until gender is chosen */
+    gap:6px;
+}
+
+.suggest-avatars.show{
+    display:flex;
+}
+
+.suggest-avatars img{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #cfe3cf;
+    cursor:pointer;
+}
+
+.suggest-avatars img:hover{
+    border-color:#2e7d32;
+}
+
+.suggest-avatars img.active{
+    border-color:#2e7d32;
+    box-shadow:0 0 0 2px #cfe3cf;
+}
+
+
+button{
+
+    width:100%;
+    padding:12px;
+    background:#2e7d32;
+    color:white;
+    border:none;
+    border-radius:20px;
+    margin-top:15px;
+    font-size:16px;
+    cursor:pointer;
+
+}
+
+button:disabled{
+    background:#9ab99c;
+    cursor:not-allowed;
+}
+
+.loc-row{
+    display:flex;
+    gap:8px;
+    margin:8px 0;
+}
+
+.loc-row input{
+    margin:0;
+    flex:1;
+}
+
+.gps-btn{
+    width:auto;
+    white-space:nowrap;
+    margin:0;
+    padding:0 14px;
+    border-radius:10px;
+    font-size:13px;
+}
+
+.loc-msg{
+    font-size:12px;
+    margin:-4px 0 8px 4px;
+    display:none;
+}
+
+.loc-msg.show{display:block;}
+.loc-msg.ok{color:#1b5e20;}
+.loc-msg.err{color:#c62828;}
+
+.addr-wrap{
+    position:relative;
+    flex:1;
+}
+
+.addr-suggestions{
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:white;
+    border:1px solid #cfe3cf;
+    border-radius:10px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.12);
+    max-height:180px;
+    overflow-y:auto;
+    z-index:10;
+    display:none;
+}
+
+.addr-suggestions.show{display:block;}
+
+.addr-suggestions div{
+    padding:8px 12px;
+    font-size:13px;
+    text-align:left;
+    cursor:pointer;
+    border-bottom:1px solid #f0f0f0;
+}
+
+.addr-suggestions div:last-child{border-bottom:none;}
+
+.addr-suggestions div:hover{background:#f1f8e9;}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="edit-box">
+
+
+<a href="farmer-profile.html" class="back-arrow" title="Back to profile">&#8592;</a>
+<h2>Edit Profile</h2>
+
+
+<div class="profile-img-wrap" onclick="toggleSuggestRow()">
+  <img id="previewImage" src="images/male-avatar.png" class="profile-img">
+  <div class="edit-icon">&#9998;</div>
+</div>
+
+<div class="suggest-row" id="suggestRow">
+  <input id="fileInput" type="file" accept="image/*" onchange="changeImage(event)">
+  <div class="suggest-avatars">
+    <img src="images/male-avatar.png" title="Use male avatar" onclick="useDefaultAvatar('male', this)">
+    <img src="images/female-avatar.png" title="Use female avatar" onclick="useDefaultAvatar('female', this)">
+  </div>
+</div>
+
+
+<input id="name"  type="text" placeholder="Farmer Name">
+
+<input id="dob" type="date" placeholder="Date of Birth" onchange="onDobChanged()">
+<div class="loc-msg" id="dobMsg" style="display:block;color:#1b5e20;font-size:12px;margin:-4px 0 8px 4px;"></div>
+
+
+<select id="gender" onchange="onGenderChanged()">
+<option value="">Select Gender</option>
+<option value="male">Male</option>
+<option value="female">Female</option>
+</select>
+
+
+<div class="loc-row">
+  <select id="countryCode" style="flex:0 0 90px;">
+    <option value="+91" selected>🇮🇳 +91</option>
+    <option value="+1">🇺🇸 +1</option>
+    <option value="+44">🇬🇧 +44</option>
+    <option value="+971">🇦🇪 +971</option>
+    <option value="+94">🇱🇰 +94</option>
+    <option value="+65">🇸🇬 +65</option>
+  </select>
+  <input id="phone" type="text" inputmode="numeric" maxlength="10" placeholder="10 digit phone number" oninput="onPhoneTyped()">
+</div>
+<div class="loc-msg" id="phoneMsg"></div>
+
+<div class="loc-row">
+  <div class="addr-wrap">
+    <input id="address" type="text" placeholder="Location / Address" oninput="onAddressTyped()" autocomplete="off">
+    <div class="addr-suggestions" id="addrSuggestions"></div>
+  </div>
+  <button type="button" class="gps-btn" id="gpsBtn" onclick="useMyLocation()">Use my location</button>
+</div>
+<div class="loc-msg" id="locMsg"></div>
+
+
+<input id="farm" type="text" placeholder="Farm Area (Acres)">
+
+
+<input id="soil" type="text" placeholder="Soil Type" list="soilList">
+<datalist id="soilList">
+<option value="Alluvial Soil">
+<option value="Black Soil (Regur)">
+<option value="Red Soil">
+<option value="Laterite Soil">
+<option value="Sandy Soil">
+<option value="Clay Soil">
+<option value="Loamy Soil">
+<option value="Silty Soil">
+<option value="Peaty Soil">
+<option value="Chalky Soil">
+<option value="Saline Soil">
+<option value="Desert Soil">
+<option value="Mountain Soil">
+<option value="Forest Soil">
+<option value="Coastal Alluvial Soil">
+<option value="Calcareous Soil">
+<option value="Marshy Soil">
+<option value="Loess Soil">
+<option value="Volcanic Soil">
+<option value="Gravelly Soil">
+</datalist>
+
+
+<input id="crop" type="text" placeholder="Main Crop" list="cropList">
+<datalist id="cropList">
+<option value="Rice (Paddy)">
+<option value="Wheat">
+<option value="Maize (Corn)">
+<option value="Sugarcane">
+<option value="Cotton">
+<option value="Groundnut">
+<option value="Millet (Bajra)">
+<option value="Sorghum (Jowar)">
+<option value="Barley">
+<option value="Soybean">
+<option value="Mustard">
+<option value="Sunflower">
+<option value="Tea">
+<option value="Coffee">
+<option value="Coconut">
+<option value="Banana">
+<option value="Tomato">
+<option value="Onion">
+<option value="Potato">
+<option value="Chilli">
+</datalist>
+
+
+<select id="irrigation">
+<option value="">Irrigation Method</option>
+<option value="Drip Irrigation">Drip Irrigation</option>
+<option value="Sprinkler Irrigation">Sprinkler Irrigation</option>
+<option value="Traditional">Traditional</option>
+</select>
+
+
+<button id="saveBtn" onclick="saveProfile()">Save Profile</button>
+
+
+</div>
+<script>
+
+let uploadedImageBase64 = null;
+// Always holds whatever should actually be saved as the profile picture —
+// either the uploaded photo (base64) or the chosen default avatar's path.
+let currentProfileImageSrc = "images/male-avatar.png";
+
+// Location is considered valid only once it has been confirmed against a real
+// place (either via GPS or by checking the typed text against geocoding data).
+let locationValid = false;
+
+// Computes the farmer's correct current age from the date of birth they picked.
+let computedAge = "";
+
+function calculateAge(dobString){
+
+    let dob = new Date(dobString);
+    let today = new Date();
+
+    let age = today.getFullYear() - dob.getFullYear();
+    let hasHadBirthdayThisYear =
+        (today.getMonth() > dob.getMonth()) ||
+        (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
+
+    if(!hasHadBirthdayThisYear){
+        age--;
+    }
+
+    return age;
+}
+
+function onDobChanged(){
+
+    let dobVal = document.getElementById("dob").value;
+    let msg = document.getElementById("dobMsg");
+
+    if(!dobVal){
+        computedAge = "";
+        msg.textContent = "";
+        return;
+    }
+
+    let dob = new Date(dobVal);
+
+    if(dob > new Date()){
+        computedAge = "";
+        msg.style.color = "#c62828";
+        msg.textContent = "Date of birth cannot be in the future.";
+        return;
+    }
+
+    computedAge = calculateAge(dobVal);
+    msg.style.color = "#1b5e20";
+    msg.textContent = "Age: " + computedAge + " years";
+
+}
+
+let phoneValid = false;
+
+function onPhoneTyped(){
+
+    let input = document.getElementById("phone");
+    // Strip anything that isn't a digit as the farmer types
+    input.value = input.value.replace(/\D/g, "").slice(0, 10);
+
+    let msg = document.getElementById("phoneMsg");
+
+    if(input.value.length === 0){
+        msg.className = "loc-msg";
+        phoneValid = false;
+        return;
+    }
+
+    if(input.value.length !== 10){
+        msg.textContent = "Phone number must be exactly 10 digits.";
+        msg.className = "loc-msg show err";
+        phoneValid = false;
+    }else{
+        msg.textContent = "Looks good.";
+        msg.className = "loc-msg show ok";
+        phoneValid = true;
+    }
+
+}
+
+function changeImage(event){
+
+    let image = document.getElementById("previewImage");
+    let file = event.target.files[0];
+
+    if(!file) return;
+
+    let reader = new FileReader();
+
+    reader.onload = function(e){
+        image.src = e.target.result;
+        uploadedImageBase64 = e.target.result;
+        currentProfileImageSrc = e.target.result;
+        document.querySelectorAll(".suggest-avatars img").forEach(img => img.classList.remove("active"));
+    };
+
+    reader.readAsDataURL(file);
+
+}
+
+// Switches the preview to the matching default avatar whenever gender is
+// picked, unless the farmer has already uploaded their own photo.
+function onGenderChanged(){
+
+    let gender = document.getElementById("gender").value;
+    let suggestBox = document.querySelector(".suggest-avatars");
+
+    if(gender === "female" || gender === "male"){
+        // Now that a gender is picked, reveal the two suggested avatars.
+        suggestBox.classList.add("show");
+        if(uploadedImageBase64) return;   // don't override an already-uploaded photo
+        useDefaultAvatar(gender, document.querySelector(`.suggest-avatars img[title="Use ${gender} avatar"]`));
+    }else{
+        // Gender cleared — hide the suggestions again.
+        suggestBox.classList.remove("show");
+    }
+
+}
+
+// Called when the farmer clicks one of the two suggested DPs next to Choose file.
+function useDefaultAvatar(gender, thumbEl){
+
+    let preview = document.getElementById("previewImage");
+    let src = gender === "female" ? "images/female-avatar.png" : "images/male-avatar.png";
+
+    preview.src = src;
+    uploadedImageBase64 = null;          // it's a default avatar, not an uploaded photo
+    currentProfileImageSrc = src;
+    document.getElementById("fileInput").value = "";
+    document.getElementById("gender").value = gender;
+
+    document.querySelectorAll(".suggest-avatars img").forEach(img => img.classList.remove("active"));
+    if(thumbEl) thumbEl.classList.add("active");
+
+}
+
+// Shows/hides the "choose file / suggested avatars" row. It stays hidden
+// until the farmer actually taps the profile picture (or its edit icon) —
+// so it doesn't clutter the form before they've asked to change the photo.
+function toggleSuggestRow(){
+    document.getElementById("suggestRow").classList.toggle("show");
+}
+
+document.addEventListener("click", function(e){
+    let row = document.getElementById("suggestRow");
+    if(row.classList.contains("show") &&
+       !e.target.closest(".suggest-row") &&
+       !e.target.closest(".profile-img-wrap")){
+        row.classList.remove("show");
+    }
+});
+
+function setLocMsg(text, ok){
+    let msg = document.getElementById("locMsg");
+    msg.textContent = text;
+    msg.className = "loc-msg show " + (ok ? "ok" : "err");
+}
+
+function clearLocMsg(){
+    let msg = document.getElementById("locMsg");
+    msg.className = "loc-msg";
+}
+
+// Reverse geocode GPS coordinates into a real, human-readable address
+// using OpenStreetMap's free Nominatim service (no API key needed).
+async function reverseGeocode(lat, lon){
+    let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=14&addressdetails=1`);
+    if(!res.ok) throw new Error("lookup failed");
+    return res.json();
+}
+
+// Builds a simple "village, taluk, district, country - pincode" style string
+// from Nominatim's address breakdown, instead of the full precise address.
+function buildSimpleAddress(data){
+
+    if(!data || !data.address) return null;
+
+    let a = data.address;
+
+    let village = a.village || a.town || a.suburb || a.city || a.hamlet;
+    let taluk = a.county || a.state_district;
+    let district = a.state_district || a.county;
+    let country = a.country;
+    let pincode = a.postcode;
+
+    let parts = [village, taluk, district, country].filter(Boolean);
+    parts = parts.filter((val, idx) => parts.indexOf(val) === idx);
+
+    let text = parts.join(", ");
+    if(pincode) text += (text ? " - " : "") + pincode;
+
+    return text || null;
+}
+
+// Forward geocode typed text to confirm it matches a real place.
+async function forwardGeocode(query){
+    let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(query)}`);
+    if(!res.ok) throw new Error("lookup failed");
+    return res.json();
+}
+
+// Checks the words the farmer actually typed really appear in the matched
+// address, so random/wrong text gets rejected instead of silently matching
+// to Nominatim's "closest guess".
+function isRealMatch(query, results){
+
+    if(!results || results.length === 0) return null;
+
+    let queryWords = query.toLowerCase()
+        .split(/[\s,]+/)
+        .filter(w => w.length > 2);
+
+    if(queryWords.length === 0) return null;
+
+    for(let place of results){
+        let placeText = (place.display_name || "").toLowerCase();
+        let matchedWords = queryWords.filter(w => placeText.includes(w));
+
+        if(matchedWords.length / queryWords.length >= 0.6){
+            return place;
+        }
+    }
+
+    return null;
+}
+
+// Shared token: whichever user action (typing / GPS / suggestion click)
+// happens LAST "wins" the address field. Any in-flight async work from an
+// older action checks this before touching the DOM, so stale network
+// responses can never overwrite a newer, correct entry.
+let locationOpId = 0;
+
+let addressDebounce;
+function onAddressTyped(){
+
+    let myOpId = ++locationOpId;
+
+    locationValid = false;
+    let val = document.getElementById("address").value.trim();
+    let box = document.getElementById("addrSuggestions");
+
+    clearTimeout(addressDebounce);
+
+    if(val.length < 3){
+        clearLocMsg();
+        box.className = "addr-suggestions";
+        box.innerHTML = "";
+        return;
+    }
+
+    addressDebounce = setTimeout(async function(){
+
+        try{
+            let results = await forwardGeocode(val);
+
+            // A newer action happened after this request started — discard.
+            if(myOpId !== locationOpId) return;
+
+            let match = isRealMatch(val, results);
+
+            if(results && results.length > 0){
+                box.innerHTML = "";
+                results.slice(0, 6).forEach(place => {
+                    let item = document.createElement("div");
+                    item.textContent = place.display_name;
+                    item.onclick = () => selectAddress(place.display_name);
+                    box.appendChild(item);
+                });
+                box.className = "addr-suggestions show";
+            }else{
+                box.className = "addr-suggestions";
+                box.innerHTML = "";
+            }
+
+            if(match){
+                locationValid = true;
+                setLocMsg("Location looks valid.", true);
+            }else{
+                locationValid = false;
+                setLocMsg("Invalid location — please enter a real place or pick a suggestion below.", false);
+            }
+        }catch(e){
+            if(myOpId !== locationOpId) return;
+            locationValid = false;
+            setLocMsg("Could not verify location right now. Try again in a moment.", false);
+        }
+
+    }, 600);
+
+}
+
+function useMyLocation(){
+
+    if(!navigator.geolocation){
+        setLocMsg("Geolocation is not supported by this browser.", false);
+        return;
+    }
+
+    let myOpId = ++locationOpId;
+
+    let btn = document.getElementById("gpsBtn");
+    btn.disabled = true;
+    btn.textContent = "Locating…";
+
+    let bestPos = null;
+    let watchId = null;
+    let finished = false;
+
+    async function finish(){
+
+        if(finished) return;
+        finished = true;
+
+        if(watchId !== null){
+            navigator.geolocation.clearWatch(watchId);
+        }
+
+        btn.disabled = false;
+        btn.textContent = "Use my location";
+
+        // Farmer already typed something (or clicked GPS again) while we
+        // were waiting — don't clobber whatever's on screen now.
+        if(myOpId !== locationOpId) return;
+
+        if(!bestPos){
+            setLocMsg("Could not get your location. Please try again.", false);
+            return;
+        }
+
+        if(bestPos.coords.accuracy && bestPos.coords.accuracy > 3000){
+            locationValid = false;
+            setLocMsg("Could not get an accurate GPS fix (only a rough network-based location, off by " + Math.round(bestPos.coords.accuracy/1000) + "km). Please turn on GPS/location services on your device, or type your location manually.", false);
+            return;
+        }
+
+        try{
+            let data = await reverseGeocode(bestPos.coords.latitude, bestPos.coords.longitude);
+
+            if(myOpId !== locationOpId) return;
+
+            let simple = buildSimpleAddress(data);
+            document.getElementById("address").value = simple || data.display_name || `${bestPos.coords.latitude}, ${bestPos.coords.longitude}`;
+            locationValid = true;
+
+            if(bestPos.coords.accuracy && bestPos.coords.accuracy > 500){
+                setLocMsg("Location set, but accuracy is low (~" + Math.round(bestPos.coords.accuracy) + "m).", false);
+            }else{
+                setLocMsg("Location detected.", true);
+            }
+        }catch(e){
+            if(myOpId !== locationOpId) return;
+            locationValid = false;
+            setLocMsg("Could not resolve your location. Try entering it manually.", false);
+        }
+
+    }
+
+    let watchStartTime = Date.now();
+
+    watchId = navigator.geolocation.watchPosition(function(pos){
+
+        let fixAge = Date.now() - pos.timestamp;
+        if(fixAge > 3000) return;
+
+        if(!bestPos || pos.coords.accuracy < bestPos.coords.accuracy){
+            bestPos = pos;
+        }
+
+        let elapsed = Date.now() - watchStartTime;
+        if(elapsed >= 3000 && pos.coords.accuracy && pos.coords.accuracy <= 300){
+            finish();
+        }
+
+    }, function(err){
+
+        if(err.code === 1){
+            finished = true;
+            if(watchId !== null) navigator.geolocation.clearWatch(watchId);
+            btn.disabled = false;
+            btn.textContent = "Use my location";
+            if(myOpId !== locationOpId) return;
+            locationValid = false;
+            setLocMsg("Location is turned off. Please turn on location access for this site and try again.", false);
+        }
+
+    }, {
+        enableHighAccuracy:true,
+        timeout:15000,
+        maximumAge:0
+    });
+
+    setTimeout(finish, 10000);
+
+}
+
+// Called when the farmer picks one of the suggested addresses from the dropdown.
+function selectAddress(displayName){
+    locationOpId++;   // picking a suggestion wins over anything still in flight
+    document.getElementById("address").value = displayName;
+    document.getElementById("addrSuggestions").className = "addr-suggestions";
+    document.getElementById("addrSuggestions").innerHTML = "";
+    locationValid = true;
+    setLocMsg("Location looks valid.", true);
+}
+
+document.addEventListener("click", function(e){
+    if(!e.target.closest(".addr-wrap")){
+        let box = document.getElementById("addrSuggestions");
+        box.className = "addr-suggestions";
+    }
+});
+
+function saveProfile(){
+
+    if(!document.getElementById("dob").value || computedAge === ""){
+        document.getElementById("dobMsg").style.color = "#c62828";
+        document.getElementById("dobMsg").textContent = "Please enter a valid date of birth.";
+        return;
+    }
+
+    if(!phoneValid){
+        let msg = document.getElementById("phoneMsg");
+        msg.textContent = "Phone number must be exactly 10 digits.";
+        msg.className = "loc-msg show err";
+        return;
+    }
+
+    let address = document.getElementById("address").value.trim();
+
+    if(!address){
+        setLocMsg("Please enter your location.", false);
+        return;
+    }
+
+    if(!locationValid){
+        setLocMsg("Invalid location — please enter a real place or use \"Use my location\".", false);
+        return;
+    }
+
+    localStorage.setItem("name", document.getElementById("name").value);
+    localStorage.setItem("dob", document.getElementById("dob").value);
+    localStorage.setItem("age", computedAge);
+    localStorage.setItem("gender", document.getElementById("gender").value);
+    let countryCode = document.getElementById("countryCode").value;
+    let phoneDigits = document.getElementById("phone").value;
+    localStorage.setItem("phone", countryCode + " " + phoneDigits);
+    localStorage.setItem("countryCode", countryCode);
+    localStorage.setItem("address", address);
+    localStorage.setItem("farm", document.getElementById("farm").value);
+    localStorage.setItem("soil", document.getElementById("soil").value);
+    localStorage.setItem("crop", document.getElementById("crop").value);
+    localStorage.setItem("irrigation", document.getElementById("irrigation").value);
+
+    localStorage.setItem("profileImage", currentProfileImageSrc);
+
+    alert("Profile Saved Successfully!");
+
+    window.location.href="farmer-profile.html";
+
+}
+
+// Pre-fill the form with whatever is already saved, so editing doesn't start blank
+window.onload = function(){
+
+    document.getElementById("name").value = localStorage.getItem("name") || "";
+    document.getElementById("dob").value = localStorage.getItem("dob") || "";
+    onDobChanged();
+    document.getElementById("gender").value = localStorage.getItem("gender") || "";
+    if(document.getElementById("gender").value){
+        // Editing an existing profile that already has a gender saved —
+        // show the suggestions right away instead of making them re-pick it.
+        document.querySelector(".suggest-avatars").classList.add("show");
+    }
+    document.getElementById("countryCode").value = localStorage.getItem("countryCode") || "+91";
+    let savedPhone = localStorage.getItem("phone") || "";
+    let savedDigitsOnly = savedPhone.replace(/\D/g, "").slice(-10);
+    document.getElementById("phone").value = savedDigitsOnly;
+    if(savedDigitsOnly.length === 10){
+        phoneValid = true;
+    }
+    document.getElementById("address").value = localStorage.getItem("address") || "";
+    document.getElementById("farm").value = localStorage.getItem("farm") || "";
+    document.getElementById("soil").value = localStorage.getItem("soil") || "";
+    document.getElementById("crop").value = localStorage.getItem("crop") || "";
+    document.getElementById("irrigation").value = localStorage.getItem("irrigation") || "";
+
+    // If an address was already saved, treat it as valid (it was confirmed when saved).
+    if(localStorage.getItem("address")){
+        locationValid = true;
+    }
+
+    let savedImage = localStorage.getItem("profileImage");
+    let gender = localStorage.getItem("gender");
+    let preview = document.getElementById("previewImage");
+
+    if(savedImage){
+        preview.src = savedImage;
+        currentProfileImageSrc = savedImage;
+        if(savedImage.startsWith("data:")){
+            uploadedImageBase64 = savedImage;
+        }
+    } else if(gender === "female"){
+        preview.src = "images/female-avatar.png";
+        currentProfileImageSrc = "images/female-avatar.png";
+    } else {
+        preview.src = "images/male-avatar.png";
+        currentProfileImageSrc = "images/male-avatar.png";
+    }
+
+}
+</script>
+
+</body>
+</html>
